@@ -6,6 +6,7 @@ import json
 import os
 import time
 from datetime import datetime, timedelta
+import mecabParse
 
 api_token = os.environ['SLACK_API_TOKEN']
 api_channel_url = "https://slack.com/api/channels.list"
@@ -68,3 +69,5 @@ ids = get_channel_list()
 for id in ids:
 	history = get_history(id)
 	print(history, '\n\n')
+	for message in history:
+		mecabParse.parse(message)
