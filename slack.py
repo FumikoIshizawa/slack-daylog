@@ -5,6 +5,7 @@ import time
 
 class Slack:
 	api_channel_url = "https://slack.com/api/channels.list"
+	api_channel_info = "https://slack.com/api/channels.info"
 	api_history_url = "https://slack.com/api/channels.history"
 
 	def __init__(self, token, oldest, latest):
@@ -20,6 +21,20 @@ class Slack:
 		ids = self._parse_channel_id(channel_list['channels'])
 
 		return ids
+
+	def get_channel_info(self, id):
+		params = urllib.parse.urlencode({
+				'token': self.token,
+				'channel': id,
+			})
+		info = self._request_json_data(self.api_channel_info, params)
+		
+		return info['channel']
+
+	def get_channel_numlogs(id, self):
+		info = get_channel_info(id)
+
+		return len(info['members'])
 
 	def get_history(self, id):
 		oldest_ts = time.mktime(self.oldest.timetuple())

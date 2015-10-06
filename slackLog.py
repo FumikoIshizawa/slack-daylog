@@ -19,6 +19,7 @@ ids = log.get_channel_list()
 
 # get history(logs) 
 for id in ids:
-	print(id, ':')
+	info = log.get_channel_info(id)
 	history = log.get_history(id)
-	print(history, '\n\n')
+	print('#', info['name'], '(', len(info['members']), 'members) -', len(history), 'logs')
+	print(history, '\n')
