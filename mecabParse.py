@@ -17,6 +17,9 @@ def replace_url(text):
 def replace_mention(text):
   return re.sub(r'<@.*>', "MENTION", text)
 
+def replace_emoji(text):
+  return re.sub(r':[a-z]:', "EMOJI", text)
+
 def parse(text):
   text = replace_url(text)
   text = replace_mention(text)
