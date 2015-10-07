@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime, timedelta
+from mecabParse import MecabParse
 from slack import Slack
 
 api_token = os.environ['SLACK_API_TOKEN']
@@ -22,3 +23,7 @@ for id in ids:
 	print(id, ':')
 	history = log.get_history(id)
 	print(history, '\n\n')
+	p = MecabParse()
+	for message in history:
+		p.parse(message)
+	print(p.get_params())
