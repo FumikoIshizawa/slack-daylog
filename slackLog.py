@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime, timedelta
+from mecabParse import MecabParse
 from slack import Slack
 from progress import Progress
 
@@ -29,5 +30,9 @@ for id in ids:
 	score = progress.score_log(len(history))
 	print('score:', score, '\n')
 	score_all += score
+	p = MecabParse()
+	for message in history:
+		p.parse(message)
+	print(p.get_params())
 
 print('Score: ', score_all)
