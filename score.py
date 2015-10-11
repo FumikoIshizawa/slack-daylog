@@ -31,18 +31,20 @@ class Score:
 			score = score_num_log[4]
 		return score / members
 
-	# lists: リスト（[0] = 単語, [1] = 動詞、名詞など）　
-	def calculate_pn_score(self, lists):
+	# lines: リスト（[0] = 単語, [1] = 品詞）　
+	def calculate_pn_score(self, lines):
 		score = 0
-		for list in lists:
-			score += self._pn_word(list[0], list[1])
+		for line in lines:
+			if line[1] not in keys:
+				continue
+			score += self._score_pn_word(line[0], line[1])
 
-		return score / len(lists)
+		score = score / len(lines)
+		return score
 
-	def _pn_word(self, word, key):
-		dics = self.pndic[key]
+	def _score_pn_word(self, word, part):
+		dics = self.pndic[part]
 		for dic in dics:
 			if word == dic['kanji'] or word == dic['yomi']:
-				# print(word, dic['score'])
 				return dic['score']
-				break
+		return 0
