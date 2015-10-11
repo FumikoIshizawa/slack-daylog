@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from mecabParse import MecabParse
 from slack import Slack
+from score import Score
 
 now = datetime.now()
 oldest_day=-3
@@ -15,14 +16,24 @@ print(oldest, ' ~ ', latest)
 
 # get all id
 ids = Slack.get_channel_list()
+sc = Score()
 
-# get history(logs) 
+# 計算
+list = []
+word = ['優れる', '動詞']
+list.append(word)
+word = ['喜び', '名詞']
+list.append(word)
+
+score_pn = sc.calculate_pn_score(list)
+print(score_pn)
+
 for id in ids:
 	log = Slack(oldest, latest, id)
 	print('#', log.info['name'], '(', len(log.info['members']), 'members) -', len(log.logs), 'logs')
 	print(log.logs)
 
-	score = log.score_log()
+	score = sc.score_log(len(log.logs), len(log.info['members']))
 	print('score:', score, '\n')
 	score_all += score
 
