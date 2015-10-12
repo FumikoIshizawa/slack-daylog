@@ -9,9 +9,6 @@ api_channel_info = "https://slack.com/api/channels.info"
 api_history_url = "https://slack.com/api/channels.history"
 api_token = os.environ['SLACK_API_TOKEN']
 
-score_num_log = [0, 10, 20, 30, 40]
-threshold_num_log = [0, 3, 6, 9, 12]
-
 class Slack:
 	def __init__(self, oldest, latest, id):
 		self.oldest = oldest
@@ -39,24 +36,6 @@ class Slack:
 		info = get_channel_info(id)
 
 		return len(info['members'])
-
-	# TODO: example
-	def score_log(self):
-		score = 0
-		num = len(self.logs)
-		members = len(self.info['members'])
-
-		if num == threshold_num_log[0]:
-			score = score_num_log[0]
-		elif threshold_num_log[0] < num and num <= threshold_num_log[1]:
-			score = score_num_log[1]
-		elif threshold_num_log[1] < num and num <= threshold_num_log[2]:
-			score = score_num_log[2]
-		elif threshold_num_log[2] < num and num <= threshold_num_log[3]:
-			score = score_num_log[3]
-		elif threshold_num_log[3] < num and num <= threshold_num_log[4]:
-			score = score_num_log[4]
-		return score / members
 
 	def _get_channel_info(self, id):
 		params = urllib.parse.urlencode({

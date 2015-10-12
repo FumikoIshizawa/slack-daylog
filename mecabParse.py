@@ -38,12 +38,25 @@ class MecabParse:
       self.count_emoji += 1
     return re.sub(self.emoji_patten, "EMOJI", text)
 
+  def parse_wordpart(self, text):
+    node = self.parse(text)
+    lines = []
+    while node:
+      line = []
+      feature = node.feature.split(',')
+      # feature内の単語(6)と品詞(0)
+      line.append(feature[6])
+      line.append(feature[0])
+      lines.append(line)
+      node = node.next
+
+    return lines
+
   def parse(self,text):
     text = self._replace_url(text)
     text = self._replace_mention(text)
     text = self._replace_emoji(text)
     self.tagger.parse('')
     node = self.tagger.parseToNode(text)
-    while node:
-      print(node.surface + '\t' + node.feature)
-      node = node.next
+
+    return node
