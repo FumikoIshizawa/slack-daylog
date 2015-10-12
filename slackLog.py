@@ -5,8 +5,10 @@ from mecabParse import MecabParse
 from slack import Slack
 from score import Score
 
+# oledest_day日前から
+oldest_day=-1
+
 now = datetime.now()
-oldest_day=-5
 duration_day=1
 oldest = datetime(now.year, now.month, now.day, 0, 0, 0, 0) + timedelta(days=oldest_day)
 latest = oldest + timedelta(days=duration_day)
