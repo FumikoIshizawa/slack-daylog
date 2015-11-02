@@ -7,8 +7,16 @@ keys = ['動詞', '名詞', '形容詞', '副詞', '助動詞']
 class Score:
 	def __init__(self):
 		self.pndic = {}
+		self.score_all = 0
+		self.score_all_pn = 0
+		self.count = 0
 		for key in keys:
 			self.pndic[key] = []
+		with open('resources/custom_pn_ja.txt') as f:
+			for line in f:
+				line = line.strip('/n')
+				line = line.split(':')
+				self.pndic[line[2]].append({'kanji': line[0], 'yomi': line[1], 'score': float(line[3])})
 		with open('resources/pn_ja.txt') as f:
 			for line in f:
 				line = line.strip('/n')
@@ -29,6 +37,7 @@ class Score:
 			score = score_num_log[3]
 		elif threshold_num_log[3] < num and num <= threshold_num_log[4]:
 			score = score_num_log[4]
+
 		return score / members
 
 	# lines: リスト（[0] = 単語, [1] = 品詞）　
@@ -40,6 +49,11 @@ class Score:
 			score += self._score_pn_word(line[0], line[1])
 
 		score = score / len(lines)
+		return score
+
+	# sum: 文章全体の合計スコア, num: 文章数, emoji: 絵文字の数
+	def add_emoji_score(self, sum, num, emoji):
+		score = (sum + emoji) / (num + emoji)
 		return score
 
 	def _score_pn_word(self, word, part):
