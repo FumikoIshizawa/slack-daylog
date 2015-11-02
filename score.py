@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
-score_num_log = [0, 10, 20, 30, 40]
+score_num_log = [0.2, 0.4, 0.6, 0.8, 1.0]
 threshold_num_log = [0, 3, 6, 9, 12]
 keys = ['動詞', '名詞', '形容詞', '副詞', '助動詞']
 
 class Score:
-	def __init__(self):
-		self.pndic = {}
+	def __init__(self, channels):
+		# Scores
 		self.score_all = 0
 		self.score_all_pn = 0
-		self.count = 0
+		self.channel_count = channels
+
+		self.pndic = {}
 		for key in keys:
 			self.pndic[key] = []
 		with open('resources/custom_pn_ja.txt') as f:
@@ -23,37 +25,38 @@ class Score:
 				line = line.split(':')
 				self.pndic[line[2]].append({'kanji': line[0], 'yomi': line[1], 'score': float(line[3])})
 
-	# TODO: example
+	def get_score_all(self):
+		return self.score_all / self.channel_count
+
+	# -1~1を0~1に調整
+	def get_score_pn(self):
+		return (self.score_all_pn / self.channel_count + 1) / 2
+
 	def score_log(self, num, members):
 		score = 0
+		count = len(score_num_log) - 1
 
-		if num == threshold_num_log[0]:
-			score = score_num_log[0]
-		elif threshold_num_log[0] < num and num <= threshold_num_log[1]:
-			score = score_num_log[1]
-		elif threshold_num_log[1] < num and num <= threshold_num_log[2]:
-			score = score_num_log[2]
-		elif threshold_num_log[2] < num and num <= threshold_num_log[3]:
-			score = score_num_log[3]
-		elif threshold_num_log[3] < num and num <= threshold_num_log[4]:
-			score = score_num_log[4]
+		for threshold in reversed(threshold_num_log):
+			if num / members > threshold:
+				score = score_num_log[count]
+				break
+			count -= 1
 
-		return score / members
+		self.score_all += score
+		return score
 
-	# lines: リスト（[0] = 単語, [1] = 品詞）　
-	def calculate_pn_score(self, lines):
+	# lines: リスト（[0] = 単語, [1] = 品詞） emoji: 絵文字の数
+	def score_pn(self, lines, emoji):
 		score = 0
 		for line in lines:
 			if line[1] not in keys:
 				continue
 			score += self._score_pn_word(line[0], line[1])
 
-		score = score / len(lines)
-		return score
+		score += emoji
+		score = score / (len(lines) + emoji)
+		self.score_all_pn += score
 
-	# sum: 文章全体の合計スコア, num: 文章数, emoji: 絵文字の数
-	def add_emoji_score(self, sum, num, emoji):
-		score = (sum + emoji) / (num + emoji)
 		return score
 
 	def _score_pn_word(self, word, part):
