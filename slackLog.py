@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from mecabParse import MecabParse
 from slack import Slack
 from score import Score
+import urllib
 
 # oledest_day日前から
 oldest_day = -1
@@ -13,6 +14,9 @@ duration_day = 1
 oldest = datetime(now.year, now.month, now.day, 0, 0, 0, 0) + timedelta(days=oldest_day)
 latest = oldest + timedelta(days=duration_day)
 score_all_np = 0
+
+server_url = 'http://pom.l-u-l.tk/'
+post_url = 'api/slack_score'
 
 print(oldest, ' ~ ', latest)
 
@@ -49,3 +53,16 @@ for id in ids:
 
 print('Score: ', sc.get_score_all())
 print('NP-Score: ', sc.get_score_pn());
+
+url = server_url + post_url
+params = {
+	'date': datetime.now().strftime('%Y-%M-%d'),
+	'project_id': 1,
+	'value': sc.get_score_pn(),
+}
+try:
+	encoded_params = urllib.parse.urlencode(params).encode(encoding='utf-8')
+	urllib.request.urlopen(url=url, data=encoded_params)
+	print('Data send: success')
+except:
+	print('Data send: error')
